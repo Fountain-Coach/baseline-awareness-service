@@ -1,0 +1,12 @@
+# requirements.txt — pinned dependencies
+
+fastapi
+uvicorn
+pydantic<2
+openai==0.28.1
+pytest
+flake8
+typesense==0.21.0
+prometheus-fastapi-instrumentator>=5.8.0
+prometheus-client>=0.16.0
+python-dotenv

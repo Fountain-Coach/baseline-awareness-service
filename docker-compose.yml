@@ -1,0 +1,129 @@
+version: "3.8"
+
+services:
+  typesense:
+    image: typesense/typesense:0.24.1
+    container_name: typesense
+    ports:
+      - "${TYPESENSE_PORT}:8108"
+    volumes:
+      - typesense-data:/data
+    env_file:
+      - .env
+    command: >
+      typesense-server
+      --api-key=${TYP_API_KEY}
+      --data-dir=/data
+      --listen-port=8108
+      --enable-cors
+
+  dashboard:
+    image: bfritscher/typesense-dashboard:latest
+    container_name: typesense-dashboard
+    depends_on:
+      - typesense
+    ports:
+      - "${DASHBOARD_PORT}:80"
+    env_file:
+      - .env
+    environment:
+      - REACT_APP_TYPESENSE_SERVER_URL=http://typesense:8108
+      - REACT_APP_TYPESENSE_API_KEY=${TYP_API_KEY}
+
+  baseline-service:
+    build:
+      context: ./baseline-service
+      dockerfile: Dockerfile
+    container_name: baseline-awareness-service
+    ports:
+      - "${BASELINE_PORT}:80"
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GPT_MODEL=${GPT_MODEL}
+      - GPT_TEMPERATURE=${GPT_TEMPERATURE}
+      - GPT_MAX_TOKENS=${GPT_MAX_TOKENS}
+      - SEMANTIC_ARC_SYSTEM_PROMPT=${SEMANTIC_ARC_SYSTEM_PROMPT}
+      - HISTORY_SYSTEM_PROMPT=${HISTORY_SYSTEM_PROMPT}
+      - PATTERNS_SYSTEM_PROMPT=${PATTERNS_SYSTEM_PROMPT}
+      - DRIFT_SYSTEM_PROMPT=${DRIFT_SYSTEM_PROMPT}
+    depends_on:
+      - typesense
+    command: >
+      uvicorn baseline_service.entrypoint:app
+      --app-dir src
+      --host 0.0.0.0
+      --port 80
+      --reload
+    volumes:
+      - ./baseline-service:/app
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prom_baseline
+    ports:
+      - "${PROMETHEUS_PORT}:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - baseline-service
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana_baseline
+    depends_on:
+      - prometheus
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "admin"
+
+  registry-service:
+    build:
+      context: ./registry-service
+      dockerfile: Dockerfile
+    container_name: registry-service
+    ports:
+      - "${REGISTRY_PORT}:8000"
+    env_file:
+      - .env
+    environment:
+      - BASELINE_API_URL=http://baseline-service:80
+      - REGISTRY_CORPUS=${REGISTRY_CORPUS}
+      - PROMETHEUS_URL=http://prometheus:${PROMETHEUS_PORT}
+    depends_on:
+      - baseline-service
+      - prometheus
+
+  planner-service:
+    build:
+      context: ./planner-service
+      dockerfile: Dockerfile
+    container_name: planner-service
+    ports:
+      - "${PLANNER_PORT}:8000"
+    env_file:
+      - .env
+    environment:
+      - BASELINE_API_URL=http://baseline-service:80
+      - REGISTRY_SERVICE_URL=http://registry-service:${REGISTRY_PORT}
+      - PROMETHEUS_URL=http://prometheus:${PROMETHEUS_PORT}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GPT_MODEL=${GPT_MODEL}
+      - GPT_TEMPERATURE=${GPT_TEMPERATURE}
+      - GPT_MAX_TOKENS=${GPT_MAX_TOKENS}
+      - SEMANTIC_ARC_SYSTEM_PROMPT=${SEMANTIC_ARC_SYSTEM_PROMPT}
+      - HISTORY_SYSTEM_PROMPT=${HISTORY_SYSTEM_PROMPT}
+      - PATTERNS_SYSTEM_PROMPT=${PATTERNS_SYSTEM_PROMPT}
+      - DRIFT_SYSTEM_PROMPT=${DRIFT_SYSTEM_PROMPT}
+      - COST_POLL_THRESHOLD_MS=${COST_POLL_THRESHOLD_MS}
+      - COST_SCHEDULE_THRESHOLD_MS=${COST_SCHEDULE_THRESHOLD_MS}
+    depends_on:
+      - baseline-service
+      - registry-service
+      - prometheus
+
+volumes:
+  typesense-data:
