@@ -3,79 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Baseline Awareness Service - Part of the FountainAI system. Captures, compares, and narrates evolving baseline knowledge over time." />
   <meta property="og:title" content="Baseline Awareness Service" />
-  <meta property="og:description" content="Analyzes baseline evolution and detects semantic drift across corpora using GPT-powered awareness services." />
+  <meta property="og:description" content="Tracks and narrates semantic baselines across time – part of the FountainAI system." />
   <meta property="og:image" content="https://raw.githubusercontent.com/Fountain-Coach/baseline-awareness-service/main/assets/logo/baseline-awareness-logo.png" />
   <meta property="og:url" content="https://fountain-coach.github.io/baseline-awareness-service/" />
+  <meta name="twitter:card" content="summary_large_image" />
   <title>Baseline Awareness Service</title>
   <style>
     body {
-      font-family: -apple-system, system-ui, sans-serif;
-      margin: 0 auto;
-      max-width: 740px;
-      padding: 2rem;
-      color: #222;
+      font-family: sans-serif;
+      max-width: 720px;
+      margin: 2rem auto;
+      padding: 1rem;
       line-height: 1.6;
+      color: #222;
     }
     header {
-      text-align: center;
-      margin-bottom: 2rem;
+      display: flex;
+      justify-content: flex-end;
     }
     header img {
-      width: 140px;
-      margin-bottom: 1rem;
+      max-width: 120px;
+      height: auto;
     }
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
+      font-size: 2em;
+      margin-top: 0;
     }
-    h2 {
-      margin-top: 2.5rem;
-    }
-    pre {
-      background: #f6f6f6;
-      padding: 1em;
-      overflow-x: auto;
-      border-radius: 4px;
-    }
-    ul {
-      padding-left: 1.4rem;
-    }
-    a {
-      color: #0077cc;
+    section {
+      margin-top: 2rem;
     }
     code {
-      background: #f0f0f0;
+      background: #f4f4f4;
       padding: 0.2em 0.4em;
-      border-radius: 3px;
+      border-radius: 4px;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 1em;
+      overflow-x: auto;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
   <header>
     <img src="https://raw.githubusercontent.com/Fountain-Coach/baseline-awareness-service/main/assets/logo/baseline-awareness-logo.png" alt="Baseline Awareness Logo" />
-    <h1>Baseline Awareness Service</h1>
-    <p>
-      The <strong>Baseline Awareness Service</strong> performs snapshotting, drift detection, and narrative understanding across evolving corpora using GPT-based reasoning. It is part of the <a href="https://github.com/Fountain-Coach">FountainAI</a> system.
-    </p>
   </header>
 
-  <h2>🧠 Key Capabilities</h2>
-  <ul>
-    <li>Corpus-initialization and file-based baseline tracking</li>
-    <li>Semantic diffing of baselines via GPT models</li>
-    <li>Context-store for persistent session memory</li>
-    <li>Narrative pattern detection in longitudinal data</li>
-    <li>Markdown-based reflections and summaries for human curation</li>
-    <li>Full lifecycle transparency and explainability</li>
-  </ul>
+  <h1>Baseline Awareness Service</h1>
 
-  <h2>🚀 Getting Started</h2>
-  <pre><code>docker compose up</code></pre>
-
-  <h2>📦 Source Repository</h2>
   <p>
-    View the source and contribute on <a href="https://github.com/Fountain-Coach/baseline-awareness-service">GitHub</a>.
+    The <strong>Baseline Awareness Service</strong> is a core module of the <a href="https://github.com/Fountain-Coach">FountainAI ecosystem</a>.
+    It captures and compares evolving semantic baselines across sessions, storing context and detecting drift over time.
   </p>
+
+  <section>
+    <h2>🔍 Key Capabilities</h2>
+    <ul>
+      <li>Create and manage semantic <code>baselines</code></li>
+      <li>Compare contexts with <code>/drift</code> detection</li>
+      <li>Generate GPT-based <code>narrative patterns</code></li>
+      <li>Store persistent context files per <code>corpus</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>🧪 Example Usage</h2>
+    <pre><code>curl -X POST http://localhost:8000/baseline/init \
+  -H "Content-Type: application/json" \
+  -d '{
+    "corpus_id": "demo",
+    "source_text": "First snapshot of semantic state"
+  }'</code></pre>
+  </section>
+
+  <section>
+    <h2>📦 Repository</h2>
+    <p>Find the full source on GitHub:
+      <a href="https://github.com/Fountain-Coach/baseline-awareness-service">github.com/Fountain-Coach/baseline-awareness-service</a>
+    </p>
+  </section>
 </body>
 </html>
